@@ -7,9 +7,23 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "chessboard.h"
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    printf("Hello, World!\n");
+    
+    struct chessboard cb;
+    
+//    white_board(&cb);
+    init_chessboard(&cb);
+
+    print_chessboard(&cb);
+    
+
+//    init_board(&cb);
+    
+    
+    
     return 0;
 }

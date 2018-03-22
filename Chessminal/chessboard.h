@@ -39,25 +39,25 @@ void init_chessboard(struct chessboard * cb);
 
 /* print the board like this:
  
- a   b   c   d   e   f   g   h
- ┌───┬───┬───┬───┬───┬───┬───┬───┐
+      a   b   c   d   e   f   g   h
+    ┌───┬───┬───┬───┬───┬───┬───┬───┐
  8  │ ♜ │ ♞ │ ♝ │ ♛ │ ♚ │ ♝ │ ♞ │ ♜ │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  7  │ ♟ │ ♟ │ ♟ │ ♟ │ ♟ │ ♟ │ ♟ │ ♟ │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  6  │   │   │   │   │   │   │   │   │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  5  │   │   │   │   │   │   │   │   │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  4  │   │   │   │   │   │   │   │   │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  3  │   │   │   │   │   │   │   │   │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  2  │ ♙ │ ♙ │ ♙ │ ♙ │ ♙ │ ♙ │ ♙ │ ♙ │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  1  │ ♖ │ ♘ │ ♗ │ ♕ │ ♔ │ ♗ │ ♘ │ ♖ │
- └───┴───┴───┴───┴───┴───┴───┴───┘
- a   b   c   d   e   f   g   h
+    └───┴───┴───┴───┴───┴───┴───┴───┘
+      a   b   c   d   e   f   g   h
  
  */
 void print_chessboard(struct chessboard * cb);
@@ -65,6 +65,6 @@ void print_chessboard(struct chessboard * cb);
 /* apply the move informed by player p, from/to positions and returns
  * the corresponding status
  */
-enum mstatus move(struct chessboard * cb, enum player p, const char * from, const char * to);
+enum mstatus move_piece(struct chessboard * cb, enum player p, const char * from, const char * to);
 
 #endif
