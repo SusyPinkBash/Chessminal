@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D48A853D2063F88200697751 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D48A853C2063F88200697751 /* main.c */; };
+		D48A85452063F8A000697751 /* chessboard.c in Sources */ = {isa = PBXBuildFile; fileRef = D48A85442063F8A000697751 /* chessboard.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		D48A85392063F88200697751 /* Chessminal */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Chessminal; sourceTree = BUILT_PRODUCTS_DIR; };
 		D48A853C2063F88200697751 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		D48A85432063F8A000697751 /* chessboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = chessboard.h; sourceTree = "<group>"; };
+		D48A85442063F8A000697751 /* chessboard.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = chessboard.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				D48A853C2063F88200697751 /* main.c */,
+				D48A85432063F8A000697751 /* chessboard.h */,
+				D48A85442063F8A000697751 /* chessboard.c */,
 			);
 			path = Chessminal;
 			sourceTree = "<group>";
@@ -120,6 +125,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D48A853D2063F88200697751 /* main.c in Sources */,
+				D48A85452063F8A000697751 /* chessboard.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
