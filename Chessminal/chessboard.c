@@ -9,12 +9,13 @@
 #include <stdio.h>
 #include "chessboard.h"
 
+
 void print_chessboard(struct chessboard * cb) {
     printf("%s\n", "      a   b   c   d   e   f   g   h");
     printf("%s\n", "    ┌───┬───┬───┬───┬───┬───┬───┬───┐");
-    for (int i=0; i < 8; i++) {
+    for (int i=0; i < 8; ++i) {
         printf(" %d  |", 8-i);
-        for (int j=0; j<8; j++) {
+        for (int j=0; j<8; ++j) {
             printf(" %s |",  utf_8_pieces[cb->position[i][j]]);
         }
         if (i!=7) {

@@ -13,6 +13,11 @@
  */
 enum player {WHITE, BLACK};
 
+struct move {
+    char col;
+    int row;
+};
+
 /* status return by move()
  */
 enum mstatus {INVALID, VALID, CHECK, CHECK_MATE};
@@ -66,5 +71,7 @@ void print_chessboard(struct chessboard * cb);
  * the corresponding status
  */
 enum mstatus move_piece(struct chessboard * cb, enum player p, const char * from, const char * to);
+
+
 
 #endif
