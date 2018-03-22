@@ -20,10 +20,6 @@ int main(int argc, const char * argv[]) {
 
     print_chessboard(&cb);
     
-
-//    init_board(&cb);
-    
-    
     
     return 0;
 }
