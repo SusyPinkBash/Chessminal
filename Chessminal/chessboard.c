@@ -9,13 +9,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "chessboard.h"
 
 // ############### EXTRA DECLARATIONS ###############
 struct move {
     char col;
-    char row;
-//    int row;
+//    char row;
+    int row;
 };
 
 char* get_input(char * input, int len);
@@ -69,14 +70,42 @@ int main(int argc, const char * argv[]) {
             game_on = 0;
         
         // do move
-        const char * from = strsep(&input, " ");
-        const char * to  = strsep(&input, " ");
-        free(input);
-//        while ((from = strsep(&input, " "))) printf("%s\n", from);
-//        memcpy(&from, &input[0], (2*sizeof(char)));
-//        memcpy(&to, &input[3], (2*sizeof(char)));
-        enum mstatus status = move_piece(&cb, current_player, from, to);
-        printf("the move is: %d\n", status);
+//        printf("%s\n", input);
+        int valid_input = 1;
+        for (int i=0; i<6; ++i) {
+//            printf("%c\n",input[i]);
+            if ((i==0 || i==3) && ((int) input[i] < 97 || (int) input[i] > 104)) {
+                printf("Invalid input, please insert a valid move\n");
+                valid_input = 0;
+                break;
+            }
+            else if ((i==1 || i==4) && ((int) input[i] < 48 || (int) input[i] > 57)) {
+                printf("Invalid input, please insert a valid move");
+                valid_input = 0;
+                break;
+            }
+            else if ((i==2) && (int) input[i] != 32 ) {
+                printf("Invalid input, please insert a valid move");
+                valid_input = 0;
+                break;
+            }
+            else if ((i==5) && ((int) input[i] != 0 && ((int) input[i] != 32))) {
+                    printf("Invalid input, please insert a valid move");
+                    valid_input = 0;
+                    break;
+
+            }
+        }
+            
+
+        if (!valid_input) continue;
+
+//        const char * from = strsep(&input, " ");
+//        const char * to  = strsep(&input, " ");
+//        free(input);
+//        enum mstatus status = move_piece(&cb, current_player, from, to);
+//
+//        printf("the move is: %d\n", status);
         
         // switch player
         if (current_player== WHITE) current_player = BLACK;
@@ -149,11 +178,11 @@ void init_chessboard(struct chessboard * cb) {
 
 // ####### MOVE FUNCTIONS #######
 enum mstatus move_piece(struct chessboard * cb, enum player p, const char * from, const char * to) {
-    
-//    struct move move_from = {&from[0], &from[1]};
-//    struct move move_to = {&to[0], &to[1]};
-//    printf("from: %c %c", move_from.col, move_from.row);
-    printf("from: %s, to: %s\n", from, to);
+//    if ((int) from[0] > 48 && (int) from[0] < 60)
+//        printf("no");
+    struct move move_from = {from[0], (int) from[1] - '0'};
+    struct move move_to = {to[0], (int) to[1] - '0'};
+    printf("from: %c%d, to:%c%d\n", move_from.col, move_from.row, move_to.col, move_to.row);
     
     return INVALID;
 }
@@ -173,7 +202,7 @@ char* get_input(char * input, int len) {
         ++i;
     }
     while (i < len) {
-        input[i] = '\0';
+        input[i] = (char) 0;
         ++i;
     }
     return input;
