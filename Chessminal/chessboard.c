@@ -29,14 +29,14 @@ int main(int argc, const char * argv[]) {
     init_chessboard(&cb);
     
     int game_on = 1;
-    char* input = malloc(7*sizeof(char));
+    
 
     
     enum player current_player = WHITE;
     
     do {
         print_chessboard(&cb);
-        
+        char* input = malloc(7*sizeof(char));
         if (current_player == WHITE) printf("w: ");
         else printf("b: ");
         
@@ -54,7 +54,9 @@ int main(int argc, const char * argv[]) {
             
             if (!strcmp(input, "draw")) {
                 printf("Game ended with DRAW\n");
+                
                 game_on = 0;
+                break;
             }
             else {
                 printf("Draw not accpeted, please enter a move\n");
@@ -67,8 +69,12 @@ int main(int argc, const char * argv[]) {
             game_on = 0;
         
         // do move
-        const char * from = &input[0];
-        const char * to = &input[3];
+        const char * from = strsep(&input, " ");
+        const char * to  = strsep(&input, " ");
+        free(input);
+//        while ((from = strsep(&input, " "))) printf("%s\n", from);
+//        memcpy(&from, &input[0], (2*sizeof(char)));
+//        memcpy(&to, &input[3], (2*sizeof(char)));
         enum mstatus status = move_piece(&cb, current_player, from, to);
         printf("the move is: %d\n", status);
         
@@ -144,9 +150,10 @@ void init_chessboard(struct chessboard * cb) {
 // ####### MOVE FUNCTIONS #######
 enum mstatus move_piece(struct chessboard * cb, enum player p, const char * from, const char * to) {
     
-    struct move move_from = {&from[0], &from[1]};
-    struct move move_to = {&to[0], &to[1]};
-    printf("from: %c %c", move_from.col, move_from.row);
+//    struct move move_from = {&from[0], &from[1]};
+//    struct move move_to = {&to[0], &to[1]};
+//    printf("from: %c %c", move_from.col, move_from.row);
+    printf("from: %s, to: %s\n", from, to);
     
     return INVALID;
 }
@@ -182,7 +189,6 @@ int check_input(char * input, char * check) {
             return 0;
     }
     return 1;
-    return 0;
 }
 
 
