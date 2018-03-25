@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D48A853D2063F88200697751 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D48A853C2063F88200697751 /* main.c */; };
 		D48A85452063F8A000697751 /* chessboard.c in Sources */ = {isa = PBXBuildFile; fileRef = D48A85442063F8A000697751 /* chessboard.c */; };
+		D48A85482064266900697751 /* moves.c in Sources */ = {isa = PBXBuildFile; fileRef = D48A85472064266900697751 /* moves.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,8 +26,11 @@
 
 /* Begin PBXFileReference section */
 		D48A85392063F88200697751 /* Chessminal */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Chessminal; sourceTree = BUILT_PRODUCTS_DIR; };
+		D48A853C2063F88200697751 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		D48A85432063F8A000697751 /* chessboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = chessboard.h; sourceTree = "<group>"; };
 		D48A85442063F8A000697751 /* chessboard.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = chessboard.c; sourceTree = "<group>"; };
+		D48A85462064266900697751 /* moves.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = moves.h; sourceTree = "<group>"; };
+		D48A85472064266900697751 /* moves.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = moves.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,8 +63,11 @@
 		D48A853B2063F88200697751 /* Chessminal */ = {
 			isa = PBXGroup;
 			children = (
+				D48A853C2063F88200697751 /* main.c */,
 				D48A85442063F8A000697751 /* chessboard.c */,
 				D48A85432063F8A000697751 /* chessboard.h */,
+				D48A85462064266900697751 /* moves.h */,
+				D48A85472064266900697751 /* moves.c */,
 				D48A853A2063F88200697751 /* Products */,
 			);
 			path = Chessminal;
@@ -122,6 +130,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D48A85482064266900697751 /* moves.c in Sources */,
+				D48A853D2063F88200697751 /* main.c in Sources */,
 				D48A85452063F8A000697751 /* chessboard.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

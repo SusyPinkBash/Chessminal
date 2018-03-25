@@ -1,9 +1,22 @@
+//
+//  chessboard.h
+//  Chessminal
+//
+//  Created by Susanna Ardigo' on 22.03.18.
+//  Copyright © 2018 Susanna Ardigo'. All rights reserved.
+//
+
 #ifndef CHESSBOARD_H_INCLUDED
 #define CHESSBOARD_H_INCLUDED
 
 /* players
  */
 enum player {WHITE, BLACK};
+
+struct move {
+    char col;
+    int row;
+};
 
 /* status return by move()
  */
@@ -31,25 +44,25 @@ void init_chessboard(struct chessboard * cb);
 
 /* print the board like this:
  
- a   b   c   d   e   f   g   h
- ┌───┬───┬───┬───┬───┬───┬───┬───┐
+      a   b   c   d   e   f   g   h
+    ┌───┬───┬───┬───┬───┬───┬───┬───┐
  8  │ ♜ │ ♞ │ ♝ │ ♛ │ ♚ │ ♝ │ ♞ │ ♜ │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  7  │ ♟ │ ♟ │ ♟ │ ♟ │ ♟ │ ♟ │ ♟ │ ♟ │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  6  │   │   │   │   │   │   │   │   │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  5  │   │   │   │   │   │   │   │   │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  4  │   │   │   │   │   │   │   │   │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  3  │   │   │   │   │   │   │   │   │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  2  │ ♙ │ ♙ │ ♙ │ ♙ │ ♙ │ ♙ │ ♙ │ ♙ │
- ├───┼───┼───┼───┼───┼───┼───┼───┤
+    ├───┼───┼───┼───┼───┼───┼───┼───┤
  1  │ ♖ │ ♘ │ ♗ │ ♕ │ ♔ │ ♗ │ ♘ │ ♖ │
- └───┴───┴───┴───┴───┴───┴───┴───┘
- a   b   c   d   e   f   g   h
+    └───┴───┴───┴───┴───┴───┴───┴───┘
+      a   b   c   d   e   f   g   h
  
  */
 void print_chessboard(struct chessboard * cb);
@@ -58,5 +71,7 @@ void print_chessboard(struct chessboard * cb);
  * the corresponding status
  */
 enum mstatus move_piece(struct chessboard * cb, enum player p, const char * from, const char * to);
+
+
 
 #endif
