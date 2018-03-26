@@ -33,16 +33,6 @@ int col_num (char col);
 // 0 false, 1 true
 
 // ####### IS VALID FUNCTIONS #######
-enum mstatus is_valid(struct chessboard * cb, struct move from, struct move to) {
-    if (!piece_in_cell(cb, from))
-        return INVALID;
-    
-    if ((piece_in_cell(cb, to)) && (piece_color(cb, from) == piece_color(cb, to)))
-        return INVALID;
-    
-    
-    return INVALID;
-}
 
 
 enum mstatus is_valid_bishop(struct chessboard * cb, struct move from, struct move to){
@@ -186,25 +176,6 @@ void check_castiling (struct chessboard * cb, struct move from, struct move to) 
     //TODO do something
 }
 
-
-/* Returns the piece on a given chessboard */
-enum pieces get_piece (struct chessboard * cb, struct move move) {
-    return cb->position[move.row][col_num(move.col)];
-}
-
-/* Returns the color of a given piece on a given chessboard */
-enum player piece_color (struct chessboard * cb, struct move move) {
-    if (get_piece(cb, move) < 7)
-        return WHITE;
-    else return BLACK;
-}
-
-/* Returns 1 if there is a piece, 0 otherwise */
-int piece_in_cell (struct chessboard * cb, struct move move) {
-    if (get_piece(cb, move) == 0)
-        return 0;
-    else return 1;
-}
 
 /* Returns 1 if the direction is up, 0 otherwise */
 int is_valid_move_up (struct chessboard * cb, struct move from, struct move to) {
