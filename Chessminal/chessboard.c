@@ -21,21 +21,23 @@ struct move {
 char* get_input(char * input, int len);
 int check_input(char * input, char * check);
 enum mstatus move_piece(struct chessboard * cb, enum player p, const char * from, const char * to);
-enum mstatus is_valid(struct chessboard * cb, enum player player, struct move from, struct move to);
+enum mstatus is_valid(struct chessboard * cb, enum player player, struct move from, struct move to, const char * array);
 enum mstatus is_valid_bishop(struct chessboard * cb, enum player player, struct move from, struct move to);
 enum mstatus is_valid_rook(struct chessboard * cb, enum player player, struct move from, struct move to);
 enum mstatus is_valid_queen(struct chessboard * cb, enum player player, struct move from, struct move to);
 enum mstatus is_valid_knight(struct chessboard * cb, enum player player, struct move from, struct move to);
 enum mstatus is_valid_pawn(struct chessboard * cb, enum player player, struct move from, struct move to);
 enum mstatus is_valid_king(struct chessboard * cb, enum player player, struct move from, struct move to);
-int is_valid_move_up (struct chessboard * cb, struct move from, struct move to);
-int is_valid_move_down (struct chessboard * cb, struct move from, struct move to);
-int is_valid_move_right (struct chessboard * cb, struct move from, struct move to);
-int is_valid_move_left (struct chessboard * cb, struct move from, struct move to);
 void pawn_promotion (struct chessboard * cb);
-void check_castiling (struct chessboard * cb, struct move from, struct move to);
+int check_castiling (struct chessboard * cb, enum player player, struct move from, struct move to);
+void update_king_coordinats (enum player player, struct move to, char * pointer);
 enum pieces get_piece (struct chessboard * cb, struct move move);
 enum player piece_color (struct chessboard * cb, struct move move);
+//int pieces_in_between (struct chessboard * cb, struct move from, struct move to);
+int is_going_up (struct chessboard * cb, struct move from, struct move to);
+int is_going_down (struct chessboard * cb, struct move from, struct move to);
+int is_going_right (struct chessboard * cb, struct move from, struct move to);
+int is_going_left (struct chessboard * cb, struct move from, struct move to);
 int piece_in_cell (struct chessboard * cb, struct move move);
 
 
@@ -47,30 +49,33 @@ int main(int argc, const char * argv[]) {
     
     int game_on = 1;
     int valid_input = 1;
-    char* input = malloc(7*sizeof(char));
+    char* input = malloc(10*sizeof(char));
     
+    input[6] = 4;
+    input[7] = 7;
+    input[8] = 4;
+    input[9] = 0;
+    
+//    struct move black_king = {4, 0};
+//    struct move white_king = {4, 7};
+//
     enum player current_player = WHITE;
-    //    char* input = malloc(7*sizeof(char));
+    
+    
     do {
         if (valid_input) print_chessboard(&cb);
         valid_input = 1;
-        
-        
+
         if (current_player == WHITE) printf("\nw: ");
         else printf("\nb: ");
 
-        
         input = get_input(input, 6);
         
-        //        printf("\ninput: %s", input);
         // check draw and resign
         if (check_input(input, "draw")) {
             if (current_player == WHITE)
                 printf("\nPlayer %c wants to draw, to accept type 'draw'\n", 'w');
             else printf("\nPlayer %c wants to draw, to accept type 'draw'\n", 'b');
-            
-            
-//            input = get_input(input, 6);
             
             if (check_input(get_input(input, 6), "draw")) {
                 printf("Game ended with DRAW\n");
@@ -83,22 +88,19 @@ int main(int argc, const char * argv[]) {
                 valid_input = 0;
                 continue;
             }
-            
         }
         
         if (check_input(input, "resign")) {
-            
             printf("You resigned\n");
             if (current_player == WHITE)
                 printf("Black won\n");
             else printf("White won\n");
             game_on = 0;
+            break;
         }
         
         // do move
-        //        printf("%s\n", input);
         for (int i=0; i<6; ++i) {
-            //            printf("%c\n",input[i]);
             if ((i==0 || i==3) && ((int) input[i] < 97 || (int) input[i] > 104)) {
                 valid_input = 0;
                 break;
@@ -126,17 +128,41 @@ int main(int argc, const char * argv[]) {
         //        const char * to  = strsep(&input, " ");
         
         enum mstatus status = move_piece(&cb, current_player, &input[0], &input[3]);
-        //        printf("the move is: %u\n", status);
-        if (status == INVALID) {
-            printf("Invalid move, please insert a valid move");
+        if (status == VALID) {
+//            struct move move_from = {input[0] - 'a', abs((int) input[1] - '1' - 7)};
+            struct move move_to = {input[3] - 'a', abs((int) input[4] - '1' - 7)};;
+//            printf("BEFORE:\n");
+//            printf("white king: %d%d\n", input[6], input[7]);
+//            printf("black king: %d%d\n", input[8], input[9]);
+//            printf("get pieace=%u\n", get_piece(&cb, move_to));
+            if (get_piece(&cb, move_to) == WHITE_KING || get_piece(&cb, move_to) == BLACK_KING) {
+//                printf("condition vera\n");
+                update_king_coordinats(current_player, move_to, &input[6]);
+            }
+//            printf("AFTER:\n");
+//            printf("white king: %d%d\n", input[6], input[7]);
+//            printf("black king: %d%d\n", input[8], input[9]);
+            
+            // check if king was moved
+        }
+        else if (status == INVALID) {
+            printf("INVALID MOVE\nPlease insert a valid move");
             valid_input = 0;
             continue;
         }
+        else if (status == CHECK) {
+            printf("CHECK");
+        }
+        else if (status == CHECK_MATE) {
+            printf("CHECKMATE");
+            game_on = 1;
+            break;
+        }
+        
         
         // switch player
-        if (current_player== WHITE) current_player = BLACK;
+        if (current_player == WHITE) current_player = BLACK;
         else current_player = WHITE;
-//                current_player = (++current_player % 2);
         
     }
     while (game_on);
@@ -174,13 +200,21 @@ void print_chessboard(struct chessboard * cb) {
 /* set the initial position of the pieces on the board */
 void init_chessboard(struct chessboard * cb) {
     cb->position[0][0] = BLACK_ROOK;
-    cb->position[0][1] = BLACK_KNIGHT;
-    cb->position[0][2] = BLACK_BISHOP;
-    cb->position[0][3] = BLACK_QUEEN;
+    cb->position[0][1] = EMPTY;
+    cb->position[0][2] = EMPTY;
+    cb->position[0][3] = EMPTY;
     cb->position[0][4] = BLACK_KING;
-    cb->position[0][5] = BLACK_BISHOP;
-    cb->position[0][6] = BLACK_KNIGHT;
+    cb->position[0][5] = EMPTY;
+    cb->position[0][6] = EMPTY;
     cb->position[0][7] = BLACK_ROOK;
+//    cb->position[0][0] = BLACK_ROOK;
+//    cb->position[0][1] = BLACK_KNIGHT;
+//    cb->position[0][2] = BLACK_BISHOP;
+//    cb->position[0][3] = BLACK_QUEEN;
+//    cb->position[0][4] = BLACK_KING;
+//    cb->position[0][5] = BLACK_BISHOP;
+//    cb->position[0][6] = BLACK_KNIGHT;
+//    cb->position[0][7] = BLACK_ROOK;
     
     for (int i = 0; i < 8; ++i) {
 //        cb->position[1][i] = BLACK_PAWN;
@@ -194,38 +228,52 @@ void init_chessboard(struct chessboard * cb) {
     }
     
     cb->position[7][0] = WHITE_ROOK;
-    cb->position[7][1] = WHITE_KNIGHT;
-    cb->position[7][2] = WHITE_BISHOP;
-    cb->position[7][3] = WHITE_QUEEN;
+    cb->position[7][1] = EMPTY;
+    cb->position[7][2] = EMPTY;
+    cb->position[7][3] = EMPTY;
     cb->position[7][4] = WHITE_KING;
-    cb->position[7][5] = WHITE_BISHOP;
-    cb->position[7][6] = WHITE_KNIGHT;
+    cb->position[7][5] = EMPTY;
+    cb->position[7][6] = EMPTY;
     cb->position[7][7] = WHITE_ROOK;
+    
+//    cb->position[7][0] = WHITE_ROOK;
+//    cb->position[7][1] = WHITE_KNIGHT;
+//    cb->position[7][2] = WHITE_BISHOP;
+//    cb->position[7][3] = WHITE_QUEEN;
+//    cb->position[7][4] = WHITE_KING;
+//    cb->position[7][5] = WHITE_BISHOP;
+//    cb->position[7][6] = WHITE_KNIGHT;
+//    cb->position[7][7] = WHITE_ROOK;
     
 }
 
 // ####### MOVE FUNCTIONS #######
 enum mstatus move_piece(struct chessboard * cb, enum player p, const char * from, const char * to) {
     struct move move_from = {from[0] - 'a', abs((int) from[1] - '1' - 7)};
-    struct move move_to = {to[0] - 'a', abs((int) to[1] - '1' - 7)};
-    //    printf("from: %d%d, to:%d%d\n", move_from.col, move_from.row, move_to.col, move_to.row);
-    //    printf("%u == %u\n", p, piece_color(cb, move_from));
+    struct move move_to = {to[0] - 'a', abs((int) to[1] - '1' - 7)};;
+//    struct move white_king = {from[6], from[7]};
+//    struct move black_king = {from[8], from[9]};
+//    printf("BEFORE:\n");
+//    printf("white king: %d%d\n", white_king.col, white_king.row);
+//    printf("black king: %d%d\n", black_king.col, black_king.row);
+    
     if (!piece_in_cell(cb, move_from) || (p != piece_color(cb, move_from)))
         return INVALID;
-    enum mstatus validity = is_valid(cb, p, move_from, move_to);
+    enum mstatus validity = is_valid(cb, p, move_from, move_to, &to[3]);
+//    if (validity && get_piece(cb, move_from) == WHITE_KING && get_piece(cb, move_from) == BLACK_KING)
+//        update_king_coordinates(p, move_to, &from[6]);
+//    printf("AFTER:\n");
+//    printf("white king: %d%d\n", white_king.col, white_king.row);
+//    printf("black king: %d%d\n", black_king.col, black_king.row);
     return validity;
-    //    return CHECK_MATE;
 }
 
 // ####### IS VALID FUNCTIONS #######
-enum mstatus is_valid(struct chessboard * cb, enum player player, struct move from, struct move to) {
-//    printf("entro nella funzione\n");
-//    printf("%u\n", piece_color(cb, from));
+enum mstatus is_valid(struct chessboard * cb, enum player player, struct move from, struct move to, const char * array) {
     if (piece_in_cell(cb, to)  && (piece_color(cb, from) == piece_color(cb, to)))
         return INVALID;
     enum mstatus validity;
-    
-//    printf("entro nello switch\n");
+
     
     switch(get_piece(cb, from)) {
         case EMPTY:
@@ -255,9 +303,7 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
             validity = is_valid_king(cb, player, from, to);
             break;
     }
-//    printf("valid = %d\n",validity);
     if (validity == VALID || validity == CHECK) {
-//        printf("from: %d%d, to:%d%d\n", (from.col), from.row, to.col, to.row);
         cb->position[to.row][to.col] = get_piece(cb, from);
         cb->position[from.row][from.col] = EMPTY;
     }
@@ -270,10 +316,9 @@ enum mstatus is_valid_pawn(struct chessboard * cb, enum player player, struct mo
     int side = abs(from.col - to.col);
     int height = abs(from.row - to.row);
     
-    if ((player == WHITE && is_valid_move_down(cb, from, to)) || (player == BLACK && is_valid_move_up(cb, from, to)))
+    if ((player == WHITE && is_going_down(cb, from, to)) || (player == BLACK && is_going_up(cb, from, to)))
         return INVALID;
-    
-    //    printf("eat=%d\nside=%d\nheight=%d\n", eat, side, height);
+
     
     if (to.row == 0) { promotion = 1; }
     
@@ -287,7 +332,6 @@ enum mstatus is_valid_pawn(struct chessboard * cb, enum player player, struct mo
             pawn_promotion(cb); //TODO to implement
         return VALID;
     }
-    //    printf("NOPE\n");
     // TODO implement 'en passant' capture
     return INVALID;
 }
@@ -309,8 +353,8 @@ enum mstatus is_valid_bishop(struct chessboard * cb, enum player player, struct 
     if (side != height) {
         return INVALID; }
     
-    if(is_valid_move_up(cb, from, to)) {
-        if (is_valid_move_right(cb, from, to)) {
+    if(is_going_up(cb, from, to)) {
+        if (is_going_right(cb, from, to)) {
             // going up right
             for (int i=1; i<side; ++i) {
                 if (cb->position[from.row-i][from.col+i] != 0)
@@ -327,7 +371,7 @@ enum mstatus is_valid_bishop(struct chessboard * cb, enum player player, struct 
     }
     else {
         // going down
-        if (is_valid_move_right(cb, from, to)) {
+        if (is_going_right(cb, from, to)) {
             // going down right
             for (int i=1; i<side; ++i) {
                 if (cb->position[from.row+i][from.col+i] != 0)
@@ -351,25 +395,25 @@ enum mstatus is_valid_rook(struct chessboard * cb, enum player player, struct mo
     if (side < 0 || height < 0 || (side > 0 && height > 0))
         return INVALID;
     
-    if (is_valid_move_up(cb, from ,to)) {
+    if (is_going_up(cb, from ,to)) {
         for (int i=1; i<height; ++i) {
             if (cb->position[from.row-i][from.col] != 0)
                 return INVALID;
         }
     }
-    else if (is_valid_move_down(cb, from, to)) {
+    else if (is_going_down(cb, from, to)) {
         for (int i=1; i<side; ++i) {
             if (cb->position[from.row+i][from.col] != 0)
                 return INVALID;
         }
     }
-    else if (is_valid_move_right(cb, from, to)) {
+    else if (is_going_right(cb, from, to)) {
         for (int i=1; i<side; ++i) {
             if (cb->position[from.row][from.col+i] != 0)
                 return INVALID;
         }
     }
-    else if (is_valid_move_left(cb, from, to)) {
+    else if (is_going_left(cb, from, to)) {
         for (int i=1; i<side; ++i) {
             if (cb->position[from.row][from.col-i] != 0)
                 return INVALID;
@@ -387,18 +431,32 @@ enum mstatus is_valid_queen(struct chessboard * cb, enum player player, struct m
 
 enum mstatus is_valid_king(struct chessboard * cb, enum player player, struct move from, struct move to){
     //TODO implement
-    
+    int castling = 0;
     if (piece_in_cell(cb, to))
         return INVALID;
     
     int side = abs(from.col - to.col);
     int height = abs(from.row - to.row);
     
-    if (side > 2 || height > 1 || (side == 2 && (height != 0 || from.row != 0 || from.row != 7 )))
+    printf("side= %d, height=%d\n", side, height);
+//    if (side > 2 || height > 1 || (side == 2 && (height != 0 || from.row != 0 || from.row != 7 )))
+    if (side == 2 && height == 0 && (!(from.row == 0 || from.row == 7)))
         return INVALID;
+    
+
  
-    if ((from.row == 0 || from.row == 7 ) && height == 0 && side == 2)
-        check_castiling(cb, from, to);
+    if (height == 0 && side == 2 && ((from.row == 0 && player == BLACK ) || (from.row == 7 && player == WHITE)))
+        castling = check_castiling(cb, player, from, to);
+    
+    if (castling)
+        return VALID;
+      
+    if (castling == 0 && side == 2)
+        return INVALID;
+        
+    
+    if (side > 1 || height > 1)
+            return INVALID;
         
         return VALID;
 }
@@ -429,29 +487,96 @@ void pawn_promotion (struct chessboard * cb) {
     //TODO do something
 }
 
-void check_castiling (struct chessboard * cb, struct move from, struct move to) {
-    //TODO do something
+int check_castiling (struct chessboard * cb, enum player player, struct move from, struct move to) {
+    // TODO: check if the pieces were not moved;
+    if (from.col != 4) return 0;
+    if (player == WHITE) {
+        // riga 7
+        if (is_going_right(cb, from, to)) {
+            struct move torre = {7, 7};
+            if (get_piece(cb, torre) == WHITE_ROOK) {
+//                printf("ok now check other conditions\n");
+                for (int i=from.col+1; i<torre.col; ++i) {
+                    if (cb->position[i][7] != EMPTY)
+                        return 0;
+                }
+                cb->position[7][7] = EMPTY;
+                cb->position[7][5] = WHITE_ROOK;
+            }
+        }
+        else if (is_going_left(cb, from, to)) {
+            struct move torre = {0, 7};
+            if (get_piece(cb, torre) == WHITE_ROOK) {
+//                printf("ok now check other conditions\n");
+                for (int i=torre.col+1; i<from.col; ++i) {
+                    if (cb->position[i][7] != EMPTY)
+                        return 0;
+                }
+                cb->position[7][0] = EMPTY;
+                cb->position[7][3] = WHITE_ROOK;
+            }
+        }
+        
+    }
+    else {
+        // riga 0
+        if (is_going_right(cb, from, to)) {
+            struct move torre = {7, 0};
+            if (get_piece(cb, torre) == BLACK_ROOK) {
+//                printf("ok now check other conditions\n");
+                for (int i=from.col+1; i<torre.col; ++i) {
+                    if (cb->position[i][0] != EMPTY)
+                        return 0;
+                }
+                cb->position[0][7] = EMPTY;
+                cb->position[0][5] = BLACK_ROOK;
+            }
+        }
+        else if (is_going_left(cb, from, to)) {
+            struct move torre = {0, 0};
+            if (get_piece(cb, torre) == BLACK_ROOK) {
+//                printf("ok now check other conditions\n");
+                for (int i=torre.col+1; i<from.col; ++i) {
+                    if (cb->position[i][7] != EMPTY)
+                        return 0;
+                }
+                cb->position[0][0] = EMPTY;
+                cb->position[0][3] = BLACK_ROOK;
+            }
+        }
+    }
+    return 1;
+}
+
+void update_king_coordinats (enum player player, struct move to, char * pointer) {
+    if (player == WHITE) {
+        pointer[0] = to.col;
+        pointer[1] = to.row;
+    }
+    else {
+        pointer[2] = to.col;
+        pointer[3] = to.row;
+    }
 }
 
 
-
 /* Returns 1 if the direction is up, 0 otherwise */
-int is_valid_move_up (struct chessboard * cb, struct move from, struct move to) {
+int is_going_up (struct chessboard * cb, struct move from, struct move to) {
     return from.row > to.row;
 }
 
 /* Returns 1 if the direction is down, 0 otherwise */
-int is_valid_move_down (struct chessboard * cb, struct move from, struct move to) {
+int is_going_down (struct chessboard * cb, struct move from, struct move to) {
     return from.row < to.row;
 }
 
 /* Returns 1 if the direction is right, 0 otherwise */
-int is_valid_move_right (struct chessboard * cb, struct move from, struct move to) {
+int is_going_right (struct chessboard * cb, struct move from, struct move to) {
     return from.col < to.col;
 }
 
 /* Returns 1 if the direction is left, 0 otherwise */
-int is_valid_move_left (struct chessboard * cb, struct move from, struct move to) {
+int is_going_left (struct chessboard * cb, struct move from, struct move to) {
     return from.col > to.col;
 }
 
