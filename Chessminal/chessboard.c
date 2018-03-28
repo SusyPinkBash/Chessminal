@@ -52,8 +52,8 @@ int main(int argc, const char * argv[]) {
     int valid_input = 1;
     char* array = malloc(16*sizeof(char));
     /* char * array structure:
-     ┌───┬───┬───┬───┬───┬───┬───┬───┐
-     └───┴───┴───┴───┴───┴───┴───┴───┘
+     ┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
+     └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
      0 -  5 => input from stdio
      positions:
      6 -  7 => white king positions
@@ -71,7 +71,7 @@ int main(int argc, const char * argv[]) {
     array[6] = 4;
     array[7] = 7;
     array[8] = 4;
-    //    array[9] = 0;
+//    array[9] = 0;
     for (int i=9; i<16; ++i) {
         array[i] = 0;
     }
@@ -328,16 +328,16 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
             validity = is_valid_king(cb, player, from, to, &array[4]);
             break;
     }
-    if (validity == VALID || validity == CHECK) {
+    if (validity == VALID) {
         cb->position[to.row][to.col] = get_piece(cb, from);
         cb->position[from.row][from.col] = EMPTY;
 //        printf("piece from: %u\n", piece_from);
         
         if (piece_from == WHITE_PAWN && to.row == 0) {
             int piece_name_not_valid;
+            printf("You reached the opposite rank, type: queen, rook, bishop, knight or no.\n");
             do {
                 piece_name_not_valid = 0;
-                printf("You reached the opposite rank, type: queen, rook, bishop or knight.\n");
                 char* new_input = malloc(6*sizeof(char));
                 new_input = get_input(new_input, 6);
                 if (check_input(new_input, "queen"))
@@ -348,6 +348,8 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
                     cb->position[to.row][to.col] = WHITE_BISHOP;
                 else if (check_input(new_input, "knight"))
                     cb->position[to.row][to.col] = WHITE_KNIGHT;
+                else if (check_input(new_input, "no"))
+                    break;
                 else {
                     printf ("invalid input, please provide a valid piece.\n");
                     piece_name_not_valid = 1;
@@ -401,13 +403,9 @@ enum mstatus is_valid_pawn(struct chessboard * cb, enum player player, struct mo
     //    if (to.row == 0 || to.row == 7) { promotion = 1; }
     
     if (!eat && side == 0 && ((height == 1) || (height == 2 && (from.row == 6 || from.row == 1)))) {
-        //        if (promotion)
-        //            pawn_promotion(cb); //TODO to implement
         return VALID;
     }
     if (eat && side == 1 && height == 1) {
-        //        if (promotion)
-        //            pawn_promotion(cb); //TODO to implement
         return VALID;
     }
     // TODO implement 'en passant' capture
@@ -562,11 +560,6 @@ int piece_in_cell (struct chessboard * cb, struct move move) {
     else return 1;
 }
 
-//void pawn_promotion (struct chessboard * cb) {
-//    printf("You have reach");
-//    //TODO do something
-//
-//}
 
 int check_castling (struct chessboard * cb, enum player player, struct move from, struct move to, const char * pointer) {
     // TODO: check if the pieces were not moved;
