@@ -362,6 +362,10 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
     
     if (validity == INVALID) return INVALID;
     
+    // move
+    cb->position[to.row][to.col] = get_piece(cb, from);
+    cb->position[from.row][from.col] = EMPTY;
+    
     // check check
     enum mstatus is_check_white = check_for_check_white(cb, white_king, from, to);
     enum mstatus is_check_black = check_for_check_black(cb, black_king, from, to);
@@ -373,6 +377,9 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
     // if I check the opponent -> CHECK
     if ((player == WHITE && is_check_white == CHECK) || (player == BLACK && is_check_black == CHECK) ) {
         printf("You cannot put yourself in a state of CHECK\n");
+        
+        cb->position[to.row][to.col] = EMPTY;
+        cb->position[from.row][from.col] = piece_from;
         return INVALID;
     }
 //    if ((player == WHITE && is_check_black == CHECK) || (player == BLACK && is_check_white == CHECK)) {
@@ -381,7 +388,6 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
     
     if (player == WHITE) {
         if (is_checkmate_black == CHECK_MATE && is_check_black == CHECK) {
-            
             return CHECK_MATE;
         }
         if (is_checkmate_black == CHECK_MATE && is_check_black != CHECK)
@@ -623,10 +629,10 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king, str
     for (int i=king.col; i<8; ++i) {
         struct move square_to_check = {i, king.row};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == WHITE_KING)
             continue;
@@ -642,10 +648,10 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king, str
     for (int i=king.col; i>=0; --i) {
         struct move square_to_check = {i, king.row};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == WHITE_KING)
             continue;
@@ -661,10 +667,10 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king, str
     for (int i=king.row; i>=0; --i) {
         struct move square_to_check = {king.col, i};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == WHITE_KING)
             continue;
@@ -680,10 +686,10 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king, str
     for (int i=king.row; i<8; ++i) {
         struct move square_to_check = {king.col, i};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == WHITE_KING)
             continue;
@@ -699,11 +705,11 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king, str
     for (int c=king.col, r= king.col; c>=0 && r>=0; --c, --r) {
         struct move square_to_check = {c, r};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
-        
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
+//
         if (piece_to_check == WHITE_KING)
             continue;
         else if (king.col-1==c && (piece_to_check == BLACK_KING || piece_to_check == BLACK_PAWN))
@@ -718,10 +724,10 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king, str
     for (int c=king.col, r= king.col; c<8 && r>=0; ++c, --r) {
         struct move square_to_check = {c, r};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == WHITE_KING)
             continue;
@@ -737,10 +743,10 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king, str
     for (int c=king.col, r= king.col; c<8 && r<8; ++c, ++r) {
         struct move square_to_check = {c, r};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == WHITE_KING)
             continue;
@@ -756,10 +762,10 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king, str
     for (int c=king.col, r= king.col; c>=0 && r<8; --c, ++r) {
         struct move square_to_check = {c, r};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == WHITE_KING)
             continue;
@@ -791,10 +797,10 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king, str
     for (int i=king.col; i<8; ++i) {
         struct move square_to_check = {i, king.row};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == BLACK_KING)
             continue;
@@ -810,10 +816,10 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king, str
     for (int i=king.col; i>=0; --i) {
         struct move square_to_check = {i, king.row};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == BLACK_KING)
             continue;
@@ -829,10 +835,10 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king, str
     for (int i=king.row; i>=0; --i) {
         struct move square_to_check = {king.col, i};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == BLACK_KING)
             continue;
@@ -848,10 +854,10 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king, str
     for (int i=king.row; i<8; ++i) {
         struct move square_to_check = {king.col, i};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == BLACK_KING)
             continue;
@@ -867,10 +873,10 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king, str
     for (int c=king.col, r= king.col; c>=0 && r>=0; --c, --r) {
         struct move square_to_check = {c, r};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == BLACK_KING)
             continue;
@@ -886,10 +892,10 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king, str
     for (int c=king.col, r= king.col; c<8 && r>=0; ++c, --r) {
         struct move square_to_check = {c, r};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == BLACK_KING)
             continue;
@@ -905,10 +911,10 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king, str
     for (int c=king.col, r= king.col; c<8 && r<8; ++c, ++r) {
         struct move square_to_check = {c, r};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == BLACK_KING)
             continue;
@@ -924,10 +930,10 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king, str
     for (int c=king.col, r= king.col; c>=0 && r<8; --c, ++r) {
         struct move square_to_check = {c, r};
         enum pieces piece_to_check = get_piece(cb, square_to_check);
-        if (square_to_check.col == from.col && square_to_check.row == from.row)
-            continue;
-        if (square_to_check.col == to.col && square_to_check.row == to.row)
-            piece_to_check = get_piece(cb, from);
+//        if (square_to_check.col == from.col && square_to_check.row == from.row)
+//            continue;
+//        if (square_to_check.col == to.col && square_to_check.row == to.row)
+//            piece_to_check = get_piece(cb, from);
         
         if (piece_to_check == BLACK_KING)
             continue;
