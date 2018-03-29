@@ -246,6 +246,11 @@ void print_chessboard(struct chessboard * cb) {
 void init_chessboard(struct chessboard * cb) {
     
     /* testing  positions */
+    
+    
+    
+    /* correct positions */
+    
     cb->position[0][0] = BLACK_ROOK;
     cb->position[0][1] = BLACK_KNIGHT;
     cb->position[0][2] = BLACK_BISHOP;
@@ -254,16 +259,16 @@ void init_chessboard(struct chessboard * cb) {
     cb->position[0][5] = BLACK_BISHOP;
     cb->position[0][6] = BLACK_KNIGHT;
     cb->position[0][7] = BLACK_ROOK;
-    
+
     for (int i = 0; i < 8; ++i) {
-        cb->position[1][i] = EMPTY;
+        cb->position[1][i] = BLACK_PAWN;
         cb->position[2][i] = EMPTY;
         cb->position[3][i] = EMPTY;
         cb->position[4][i] = EMPTY;
         cb->position[5][i] = EMPTY;
-        cb->position[6][i] = EMPTY;
+        cb->position[6][i] = WHITE_PAWN;
     }
-    
+
     cb->position[7][0] = WHITE_ROOK;
     cb->position[7][1] = WHITE_KNIGHT;
     cb->position[7][2] = WHITE_BISHOP;
@@ -272,37 +277,6 @@ void init_chessboard(struct chessboard * cb) {
     cb->position[7][5] = WHITE_BISHOP;
     cb->position[7][6] = WHITE_KNIGHT;
     cb->position[7][7] = WHITE_ROOK;
-    
-    
-    
-    /* correct positions */
-    
-//    cb->position[0][0] = BLACK_ROOK;
-//    cb->position[0][1] = BLACK_KNIGHT;
-//    cb->position[0][2] = BLACK_BISHOP;
-//    cb->position[0][3] = BLACK_QUEEN;
-//    cb->position[0][4] = BLACK_KING;
-//    cb->position[0][5] = BLACK_BISHOP;
-//    cb->position[0][6] = BLACK_KNIGHT;
-//    cb->position[0][7] = BLACK_ROOK;
-//
-//    for (int i = 0; i < 8; ++i) {
-//        cb->position[1][i] = BLACK_PAWN;
-//        cb->position[2][i] = EMPTY;
-//        cb->position[3][i] = EMPTY;
-//        cb->position[4][i] = EMPTY;
-//        cb->position[5][i] = EMPTY;
-//        cb->position[6][i] = WHITE_PAWN;
-//    }
-//
-//    cb->position[7][0] = WHITE_ROOK;
-//    cb->position[7][1] = WHITE_KNIGHT;
-//    cb->position[7][2] = WHITE_BISHOP;
-//    cb->position[7][3] = WHITE_QUEEN;
-//    cb->position[7][4] = WHITE_KING;
-//    cb->position[7][5] = WHITE_BISHOP;
-//    cb->position[7][6] = WHITE_KNIGHT;
-//    cb->position[7][7] = WHITE_ROOK;
 
 }
 
@@ -324,7 +298,7 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
         return INVALID;
     enum mstatus validity;
     enum pieces piece_from = get_piece(cb, from);
-//    enum pieces piece_to = get_piece(cb, to);
+    enum pieces piece_to = get_piece(cb, to);
     
     struct move white_king = {array[0],array[1]};
     struct move black_king = {array[2],array[3]};
@@ -364,7 +338,7 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
     if (validity == INVALID) return INVALID;
     
     // move
-    cb->position[to.row][to.col] = get_piece(cb, from);
+    cb->position[to.row][to.col] = piece_from;
     cb->position[from.row][from.col] = EMPTY;
     
     // check check
@@ -372,14 +346,12 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
     enum mstatus is_check_black = check_for_check_black(cb, black_king);
     enum mstatus is_stalemate_white = check_for_stalemate_white(cb, player, white_king);
     enum mstatus is_stalemate_black = check_for_stalemate_white(cb, player, black_king);
-//    printf("check checkmate white: %u \n", is_checkmate_white);
-//    printf("check checkmate black: %u \n", is_checkmate_black);
     // if I check myself -> INVALID
     // if I check the opponent -> CHECK
     if ((player == WHITE && is_check_white == CHECK) || (player == BLACK && is_check_black == CHECK) ) {
         printf("You cannot put yourself in a state of CHECK\n");
         
-        cb->position[to.row][to.col] = EMPTY;
+        cb->position[to.row][to.col] = piece_to;
         cb->position[from.row][from.col] = piece_from;
         return INVALID;
     }
@@ -761,8 +733,48 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king) {
     }
     
     // CHECK FOR KNIGHT
-//    int one = 1;
-//    int two = 2;
+    if (king.col-2>=0 && king.row-1>=0) {
+        struct move square_to_check = {king.col-2, king.row-1};
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+            return CHECK;
+    }
+    if (king.col-1>=0 && king.row-2>=0) {
+        struct move square_to_check = {king.col-1, king.row-2};
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+            return CHECK;
+    }
+    if (king.col-2>=0 && king.row+1<8) {
+        struct move square_to_check = {king.col-2, king.row-1};
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+            return CHECK;
+    }
+    if (king.col-1>=0 && king.row+2<8) {
+        struct move square_to_check = {king.col-1, king.row-2};
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+            return CHECK;
+    }
+    //
+    if (king.col+2<8 && king.row-1>=0) {
+        struct move square_to_check = {king.col+2, king.row-1};
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+            return CHECK;
+    }
+    if (king.col+1<8 && king.row-2>=0) {
+        struct move square_to_check = {king.col+1, king.row-2};
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+            return CHECK;
+    }
+    if (king.col+2<8 && king.row+1<8) {
+        struct move square_to_check = {king.col+2, king.row-1};
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+            return CHECK;
+    }
+    if (king.col+1<8 && king.row+2<8) {
+        struct move square_to_check = {king.col+1, king.row-2};
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+            return CHECK;
+    }
+    
     
         return VALID;
 }
@@ -929,8 +941,47 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
     }
     
     // CHECK FOR KNIGHT
-    //    int one = 1;
-    //    int two = 2;
+    if (king.col-2>=0 && king.row-1>=0) {
+        struct move square_to_check = {king.col-2, king.row-1};
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+            return CHECK;
+    }
+    if (king.col-1>=0 && king.row-2>=0) {
+        struct move square_to_check = {king.col-1, king.row-2};
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+            return CHECK;
+    }
+    if (king.col-2>=0 && king.row+1<8) {
+        struct move square_to_check = {king.col-2, king.row-1};
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+            return CHECK;
+    }
+    if (king.col-1>=0 && king.row+2<8) {
+        struct move square_to_check = {king.col-1, king.row-2};
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+            return CHECK;
+    }
+    //
+    if (king.col+2<8 && king.row-1>=0) {
+        struct move square_to_check = {king.col+2, king.row-1};
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+            return CHECK;
+    }
+    if (king.col+1<8 && king.row-2>=0) {
+        struct move square_to_check = {king.col+1, king.row-2};
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+            return CHECK;
+    }
+    if (king.col+2<8 && king.row+1<8) {
+        struct move square_to_check = {king.col+2, king.row-1};
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+            return CHECK;
+    }
+    if (king.col+1<8 && king.row+2<8) {
+        struct move square_to_check = {king.col+1, king.row-2};
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+            return CHECK;
+    }
     
     return VALID;
 }
@@ -984,7 +1035,7 @@ enum mstatus check_for_stalemate_white(struct chessboard * cb, enum player playe
     }
     
     if (above_left == CHECK && above_middle == CHECK &&  above_right == CHECK && middle_left == CHECK && middle_right == CHECK && below_left == CHECK && below_middle == CHECK && below_right == CHECK) {
-        return CHECK_MATE;
+        return STALE_MATE;
     }
     
     return VALID;
