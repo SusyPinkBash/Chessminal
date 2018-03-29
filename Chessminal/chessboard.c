@@ -340,6 +340,17 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
     cb->position[from.row][from.col] = EMPTY;
     cb->position[to.row][to.col] = piece_from;
     
+//    printf("BEFORE CHECKING FOR CHECK\n");
+//    print_chessboard(cb);
+    
+    if (piece_from == WHITE_KING) {
+        white_king.col = to.col;
+        white_king.row = to.row;
+    }
+    else if (piece_from == BLACK_KING) {
+        black_king.col = to.col;
+        black_king.row = to.row;
+    }
     
     // check check
     enum mstatus is_check_white = check_for_check_white(cb, white_king);
@@ -348,6 +359,8 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
     enum mstatus is_stalemate_black = check_for_stalemate_white(cb, player, black_king);
     // if I check myself -> INVALID
     // if I check the opponent -> CHECK
+//    printf("AFTER CHECKING FOR CHECK\n");
+//    print_chessboard(cb);
     if ((player == WHITE && is_check_white == CHECK) || (player == BLACK && is_check_black == CHECK) ) {
         printf("You cannot put yourself in a state of CHECK\n");
         
@@ -595,6 +608,7 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king) {
     // check diagonals:        -> bishop || queen || (if distance = 1 opponents king) ||(if white below pawn) (if black above pawn)
     // check knight positions  -> knight
     
+    // cb->position[king.row][king.col] = EMPTY;
     
     // ROW RIGHT:
     for (int i=king.col; i<8; ++i) {
@@ -602,10 +616,16 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king) {
         enum pieces piece_to_check = get_piece(cb, square_to_check);
         if (piece_to_check == WHITE_KING)
             continue;
-        if (king.col+1==i && piece_to_check == BLACK_KING)
+        if (king.col+1==i && piece_to_check == BLACK_KING) {
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
-        if (piece_to_check == BLACK_ROOK || piece_to_check == BLACK_QUEEN)
+        }
+        if (piece_to_check == BLACK_ROOK || piece_to_check == BLACK_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -616,10 +636,16 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king) {
         enum pieces piece_to_check = get_piece(cb, square_to_check);
         if (piece_to_check == WHITE_KING)
             continue;
-        if (king.col-1==i && piece_to_check == BLACK_KING)
+        if (king.col-1==i && piece_to_check == BLACK_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
-        if (piece_to_check == BLACK_ROOK || piece_to_check == BLACK_QUEEN)
+        }
+        if (piece_to_check == BLACK_ROOK || piece_to_check == BLACK_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -630,10 +656,16 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king) {
         enum pieces piece_to_check = get_piece(cb, square_to_check);
         if (piece_to_check == WHITE_KING)
             continue;
-        if (king.row-1==i && piece_to_check == BLACK_KING)
+        if (king.row-1==i && piece_to_check == BLACK_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
-        if (piece_to_check == BLACK_ROOK || piece_to_check == BLACK_QUEEN)
+        }
+        if (piece_to_check == BLACK_ROOK || piece_to_check == BLACK_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -644,10 +676,16 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king) {
         enum pieces piece_to_check = get_piece(cb, square_to_check);
         if (piece_to_check == WHITE_KING)
             continue;
-        if (king.row+1==i && piece_to_check == BLACK_KING)
+        if (king.row+1==i && piece_to_check == BLACK_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
-        if (piece_to_check == BLACK_BISHOP || piece_to_check == BLACK_QUEEN)
+        }
+        if (piece_to_check == BLACK_BISHOP || piece_to_check == BLACK_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -663,10 +701,16 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king) {
 //
         if (piece_to_check == WHITE_KING)
             continue;
-        if (king.col-1==c && king.row-1==r && (piece_to_check == BLACK_KING || piece_to_check == BLACK_PAWN))
+        if (king.col-1==c && king.row-1==r && (piece_to_check == BLACK_KING || piece_to_check == BLACK_PAWN)){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
-        if (piece_to_check == BLACK_BISHOP || piece_to_check == BLACK_QUEEN)
+        }
+        if (piece_to_check == BLACK_BISHOP || piece_to_check == BLACK_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -682,10 +726,16 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == WHITE_KING)
             continue;
-        if (king.col+1==c && king.row-1==r && (piece_to_check == BLACK_KING || piece_to_check == BLACK_PAWN))
+        if (king.col+1==c && king.row-1==r && (piece_to_check == BLACK_KING || piece_to_check == BLACK_PAWN)){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
-        if (piece_to_check == BLACK_BISHOP || piece_to_check == BLACK_QUEEN)
+        }
+        if (piece_to_check == BLACK_BISHOP || piece_to_check == BLACK_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -701,10 +751,16 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == WHITE_KING)
             continue;
-        if (king.col+1==c && king.row+1==r && piece_to_check == BLACK_KING)
+        if (king.col+1==c && king.row+1==r && piece_to_check == BLACK_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
-        if (piece_to_check == BLACK_BISHOP || piece_to_check == BLACK_QUEEN)
+        }
+        if (piece_to_check == BLACK_BISHOP || piece_to_check == BLACK_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -720,56 +776,94 @@ enum mstatus check_for_check_white(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == WHITE_KING)
             continue;
-        if (king.col-1==c && king.row+1==r && piece_to_check == BLACK_KING)
+        if (king.col-1==c && king.row+1==r && piece_to_check == BLACK_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
-        if (piece_to_check == BLACK_BISHOP || piece_to_check == BLACK_QUEEN)
+        }
+        if (piece_to_check == BLACK_BISHOP || piece_to_check == BLACK_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
-        if (piece_to_check != EMPTY)
+        }
             break;
     }
     
     // CHECK FOR KNIGHT
     if (king.col-2>=0 && king.row-1>=0) {
         struct move square_to_check = {king.col-2, king.row-1};
-        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
     }
     if (king.col-1>=0 && king.row-2>=0) {
         struct move square_to_check = {king.col-1, king.row-2};
-        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
     }
     if (king.col-2>=0 && king.row+1<8) {
         struct move square_to_check = {king.col-2, king.row+1};
-        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
     }
     if (king.col-1>=0 && king.row+2<8) {
         struct move square_to_check = {king.col-1, king.row+2};
-        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
     }
     //
     if (king.col+2<8 && king.row-1>=0) {
         struct move square_to_check = {king.col+2, king.row-1};
-        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
     }
     if (king.col+1<8 && king.row-2>=0) {
         struct move square_to_check = {king.col+1, king.row-2};
-        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
     }
     if (king.col+2<8 && king.row+1<8) {
         struct move square_to_check = {king.col+2, king.row+1};
-        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
     }
     if (king.col+1<8 && king.row+2<8) {
         struct move square_to_check = {king.col+1, king.row+2};
-        if (get_piece(cb, square_to_check) == BLACK_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == BLACK_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = WHITE_KING;
             return CHECK;
+        }
     }
+    // cb->position[king.row][king.col] = WHITE_KING;
     
         return VALID;
 }
@@ -783,6 +877,8 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
     // check diagonals:        -> bishop || queen || (if distance = 1 opponents king) ||(if white below pawn) (if black above pawn)
     // check knight positions  -> knight
     
+    // cb->position[king.row][king.col] = EMPTY;
+    
     // ROW RIGHT:
     for (int i=king.col; i<8; ++i) {
         struct move square_to_check = {i, king.row};
@@ -794,10 +890,16 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == BLACK_KING)
             continue;
-        if (king.col+1==i && piece_to_check == WHITE_KING)
+        if (king.col+1==i && piece_to_check == WHITE_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
-        if (piece_to_check == WHITE_ROOK || piece_to_check == WHITE_QUEEN)
+        }
+        if (piece_to_check == WHITE_ROOK || piece_to_check == WHITE_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -813,10 +915,16 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == BLACK_KING)
             continue;
-        if (king.col-1==i && piece_to_check == WHITE_KING)
+        if (king.col-1==i && piece_to_check == WHITE_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
-        if (piece_to_check == WHITE_ROOK || piece_to_check == WHITE_QUEEN)
+        }
+        if (piece_to_check == WHITE_ROOK || piece_to_check == WHITE_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -832,10 +940,16 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == BLACK_KING)
             continue;
-        if (king.row-1==i && piece_to_check == WHITE_KING)
+        if (king.row-1==i && piece_to_check == WHITE_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
-        if (piece_to_check == WHITE_ROOK || piece_to_check == WHITE_QUEEN)
+        }
+        if (piece_to_check == WHITE_ROOK || piece_to_check == WHITE_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -851,10 +965,17 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == BLACK_KING)
             continue;
-        if (king.row+1==i && piece_to_check == WHITE_KING)
+        if (king.row+1==i && piece_to_check == WHITE_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
-        if (piece_to_check == WHITE_ROOK || piece_to_check == WHITE_QUEEN)
+        }
+        if (piece_to_check == WHITE_ROOK || piece_to_check == WHITE_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            printf("from cb->pos:%d\n", cb->position[0][4]);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -870,10 +991,16 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == BLACK_KING)
             continue;
-        if (king.col-1==c && king.row-1==r && piece_to_check == WHITE_KING)
+        if (king.col-1==c && king.row-1==r && piece_to_check == WHITE_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
-        if (piece_to_check == WHITE_BISHOP || piece_to_check == WHITE_QUEEN)
+        }
+        if (piece_to_check == WHITE_BISHOP || piece_to_check == WHITE_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -889,10 +1016,16 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == BLACK_KING)
             continue;
-        if (king.col+1==c && king.row-1==r && piece_to_check == WHITE_KING)
+        if (king.col+1==c && king.row-1==r && piece_to_check == WHITE_KING){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
-        if (piece_to_check == WHITE_BISHOP || piece_to_check == WHITE_QUEEN)
+        }
+        if (piece_to_check == WHITE_BISHOP || piece_to_check == WHITE_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -908,10 +1041,16 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == BLACK_KING)
             continue;
-        if (king.col+1==c && king.row+1==r && (piece_to_check == WHITE_KING || piece_to_check == WHITE_PAWN))
+        if (king.col+1==c && king.row+1==r && (piece_to_check == WHITE_KING || piece_to_check == WHITE_PAWN)){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
-        if (piece_to_check == WHITE_BISHOP || piece_to_check == WHITE_QUEEN)
+        }
+        if (piece_to_check == WHITE_BISHOP || piece_to_check == WHITE_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -927,10 +1066,16 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
         
         if (piece_to_check == BLACK_KING)
             continue;
-        if (king.col-1==c && king.row+1==r && (piece_to_check == WHITE_KING || piece_to_check == WHITE_PAWN))
+        if (king.col-1==c && king.row+1==r && (piece_to_check == WHITE_KING || piece_to_check == WHITE_PAWN)){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
-        if (piece_to_check == WHITE_BISHOP || piece_to_check == WHITE_QUEEN)
+        }
+        if (piece_to_check == WHITE_BISHOP || piece_to_check == WHITE_QUEEN){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
         if (piece_to_check != EMPTY)
             break;
     }
@@ -938,50 +1083,85 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
     // CHECK FOR KNIGHT
     if (king.col-2>=0 && king.row-1>=0) {
         struct move square_to_check = {king.col-2, king.row-1};
-        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
     }
     if (king.col-1>=0 && king.row-2>=0) {
         struct move square_to_check = {king.col-1, king.row-2};
-        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
     }
     if (king.col-2>=0 && king.row+1<8) {
         struct move square_to_check = {king.col-2, king.row+1};
-        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
     }
     if (king.col-1>=0 && king.row+2<8) {
         struct move square_to_check = {king.col-1, king.row-2};
-        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
     }
     //
     if (king.col+2<8 && king.row-1>=0) {
         struct move square_to_check = {king.col+2, king.row-1};
-        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
     }
     if (king.col+1<8 && king.row-2>=0) {
         struct move square_to_check = {king.col+1, king.row-2};
-        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
     }
     if (king.col+2<8 && king.row+1<8) {
         struct move square_to_check = {king.col+2, king.row+1};
-        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
     }
     if (king.col+1<8 && king.row+2<8) {
         struct move square_to_check = {king.col+1, king.row+2};
-        if (get_piece(cb, square_to_check) == WHITE_KNIGHT)
+        enum pieces piece_to_check = get_piece(cb, square_to_check);
+        if (get_piece(cb, square_to_check) == WHITE_KNIGHT){
+            printf("line %d: check from piece %u at %d%d to king at %d%d\n", __LINE__, piece_to_check, square_to_check.col, square_to_check.row, king.col, king.row);
+            // cb->position[king.row][king.col] = BLACK_KING;
             return CHECK;
+        }
     }
+    // cb->position[king.row][king.col] = BLACK_KING;
     
     return VALID;
 }
 
 enum mstatus check_for_stalemate_white(struct chessboard * cb, enum player player, struct move king) {
+    
+    printf("WHITE STALEMATE CHECK START:\n");
 //    struct move fake_king;
     int king_col = king.col;
     int king_row = king.row;
@@ -1037,6 +1217,7 @@ enum mstatus check_for_stalemate_white(struct chessboard * cb, enum player playe
     
 }
 enum mstatus check_for_stalemate_black(struct chessboard * cb, enum player player, struct move king) {
+    printf("BLACK STALEMATE CHECK START:\n");
     int king_col = king.col;
     int king_row = king.row;
     // check above
@@ -1243,7 +1424,4 @@ int check_input(char * input, char * check) {
     }
     return 1;
 }
-
-
-
 
