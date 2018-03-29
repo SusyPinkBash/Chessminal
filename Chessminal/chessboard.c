@@ -512,15 +512,15 @@ enum mstatus is_valid_bishop(struct chessboard * cb, enum player player, struct 
     if(is_going_up(cb, from, to)) {
         if (is_going_right(cb, from, to)) {
             // going up right
-            for (int i=1; i<side; ++i) {
-                if (cb->position[from.row-i][from.col+i] != 0)
+            for (int i=1; i<=side; ++i) {
+                if (cb->position[from.row-i][from.col+i] != EMPTY)
                     return INVALID;
             }
         }
         else {
             // going up left
-            for (int i=1; i<side; ++i) {
-                if (cb->position[from.row-i][from.col-i] != 0)
+            for (int i=1; i<=side; ++i) {
+                if (cb->position[from.row-i][from.col-i] != EMPTY)
                     return INVALID;
             }
         }
@@ -529,15 +529,15 @@ enum mstatus is_valid_bishop(struct chessboard * cb, enum player player, struct 
         // going down
         if (is_going_right(cb, from, to)) {
             // going down right
-            for (int i=1; i<side; ++i) {
-                if (cb->position[from.row+i][from.col+i] != 0)
+            for (int i=1; i<=side; ++i) {
+                if (cb->position[from.row+i][from.col+i] != EMPTY)
                     return INVALID;
             }
         }
         else {
             // going down left
-            for (int i=1; i<side; ++i) {
-                if (cb->position[from.row+i][from.col-i] != 0)
+            for (int i=1; i<=side; ++i) {
+                if (cb->position[from.row+i][from.col-i] != EMPTY)
                     return INVALID;
             }
         }
@@ -552,26 +552,26 @@ enum mstatus is_valid_rook(struct chessboard * cb, enum player player, struct mo
         return INVALID;
     
     if (is_going_up(cb, from ,to)) {
-        for (int i=1; i<height; ++i) {
-            if (cb->position[from.row-i][from.col] != 0)
+        for (int i=1; i<=height; ++i) {
+            if (cb->position[from.row-i][from.col] != EMPTY)
                 return INVALID;
         }
     }
     else if (is_going_down(cb, from, to)) {
-        for (int i=1; i<side; ++i) {
-            if (cb->position[from.row+i][from.col] != 0)
+        for (int i=1; i<=height; ++i) {
+            if (cb->position[from.row+i][from.col] != EMPTY)
                 return INVALID;
         }
     }
     else if (is_going_right(cb, from, to)) {
-        for (int i=1; i<side; ++i) {
-            if (cb->position[from.row][from.col+i] != 0)
+        for (int i=1; i<=side; ++i) {
+            if (cb->position[from.row][from.col+i] != EMPTY)
                 return INVALID;
         }
     }
     else if (is_going_left(cb, from, to)) {
-        for (int i=1; i<side; ++i) {
-            if (cb->position[from.row][from.col-i] != 0)
+        for (int i=1; i<=side; ++i) {
+            if (cb->position[from.row][from.col-i] != EMPTY)
                 return INVALID;
         }
     }
