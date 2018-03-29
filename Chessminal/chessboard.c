@@ -148,7 +148,7 @@ int main(int argc, const char * argv[]) {
         //        const char * to  = strsep(&input, " ");
         
         enum mstatus status = move_piece(&cb, current_player, &array[0], &array[3]);
-        if (status == VALID) {
+        if (status == VALID || status == CHECK) {
             struct move move_from = {array[0] - 'a', abs((int) array[1] - '1' - 7)};
             struct move move_to = {array[3] - 'a', abs((int) array[4] - '1' - 7)};;
             enum pieces piece = get_piece(&cb, move_to);
@@ -238,46 +238,65 @@ void print_chessboard(struct chessboard * cb) {
 /* set the initial position of the pieces on the board */
 void init_chessboard(struct chessboard * cb) {
     
-    //    for (int i = 0; i < 8; ++i) {
-    //        cb->position[0][i] = EMPTY;
-    //        cb->position[1][i] = EMPTY;
-    //        cb->position[2][i] = EMPTY;
-    //        cb->position[3][i] = EMPTY;
-    //        cb->position[4][i] = EMPTY;
-    //        cb->position[5][i] = EMPTY;
-    //        cb->position[6][i] = EMPTY;
-    //        cb->position[7][i] = EMPTY;
-    //    }
-    //    cb->position[6][4] = BLACK_PAWN;
-    //    cb->position[1][4] = WHITE_PAWN;
+    /* testing  positions */
+        cb->position[0][0] = BLACK_ROOK;
+        cb->position[0][1] = BLACK_KNIGHT;
+        cb->position[0][2] = BLACK_BISHOP;
+        cb->position[0][3] = BLACK_QUEEN;
+        cb->position[0][4] = BLACK_KING;
+        cb->position[0][5] = BLACK_BISHOP;
+        cb->position[0][6] = BLACK_KNIGHT;
+        cb->position[0][7] = BLACK_ROOK;
     
-    cb->position[0][0] = BLACK_ROOK;
-    cb->position[0][1] = BLACK_KNIGHT;
-    cb->position[0][2] = BLACK_BISHOP;
-    cb->position[0][3] = BLACK_QUEEN;
-    cb->position[0][4] = BLACK_KING;
-    cb->position[0][5] = BLACK_BISHOP;
-    cb->position[0][6] = BLACK_KNIGHT;
-    cb->position[0][7] = BLACK_ROOK;
+        for (int i = 0; i < 8; ++i) {
+            cb->position[1][i] = BLACK_PAWN;
+            cb->position[2][i] = EMPTY;
+            cb->position[3][i] = EMPTY;
+            cb->position[4][i] = EMPTY;
+            cb->position[5][i] = EMPTY;
+            cb->position[6][i] = WHITE_PAWN;
+        }
     
-    for (int i = 0; i < 8; ++i) {
-        cb->position[1][i] = BLACK_PAWN;
-        cb->position[2][i] = EMPTY;
-        cb->position[3][i] = EMPTY;
-        cb->position[4][i] = EMPTY;
-        cb->position[5][i] = EMPTY;
-        cb->position[6][i] = WHITE_PAWN;
-    }
+        cb->position[7][0] = WHITE_ROOK;
+        cb->position[7][1] = WHITE_KNIGHT;
+        cb->position[7][2] = WHITE_BISHOP;
+        cb->position[7][3] = WHITE_QUEEN;
+        cb->position[7][4] = WHITE_KING;
+        cb->position[7][5] = WHITE_BISHOP;
+        cb->position[7][6] = WHITE_KNIGHT;
+        cb->position[7][7] = WHITE_ROOK;
     
-    cb->position[7][0] = WHITE_ROOK;
-    cb->position[7][1] = WHITE_KNIGHT;
-    cb->position[7][2] = WHITE_BISHOP;
-    cb->position[7][3] = WHITE_QUEEN;
-    cb->position[7][4] = WHITE_KING;
-    cb->position[7][5] = WHITE_BISHOP;
-    cb->position[7][6] = WHITE_KNIGHT;
-    cb->position[7][7] = WHITE_ROOK;
     
+    
+    /* correct positions */
+    
+//    cb->position[0][0] = BLACK_ROOK;
+//    cb->position[0][1] = BLACK_KNIGHT;
+//    cb->position[0][2] = BLACK_BISHOP;
+//    cb->position[0][3] = BLACK_QUEEN;
+//    cb->position[0][4] = BLACK_KING;
+//    cb->position[0][5] = BLACK_BISHOP;
+//    cb->position[0][6] = BLACK_KNIGHT;
+//    cb->position[0][7] = BLACK_ROOK;
+//
+//    for (int i = 0; i < 8; ++i) {
+//        cb->position[1][i] = BLACK_PAWN;
+//        cb->position[2][i] = EMPTY;
+//        cb->position[3][i] = EMPTY;
+//        cb->position[4][i] = EMPTY;
+//        cb->position[5][i] = EMPTY;
+//        cb->position[6][i] = WHITE_PAWN;
+//    }
+//
+//    cb->position[7][0] = WHITE_ROOK;
+//    cb->position[7][1] = WHITE_KNIGHT;
+//    cb->position[7][2] = WHITE_BISHOP;
+//    cb->position[7][3] = WHITE_QUEEN;
+//    cb->position[7][4] = WHITE_KING;
+//    cb->position[7][5] = WHITE_BISHOP;
+//    cb->position[7][6] = WHITE_KNIGHT;
+//    cb->position[7][7] = WHITE_ROOK;
+//
 }
 
 
@@ -298,6 +317,11 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
         return INVALID;
     enum mstatus validity;
     enum pieces piece_from = get_piece(cb, from);
+    
+    struct move white_king = {array[0],array[1]};
+    struct move black_king = {array[2],array[3]};
+//    printf("white king at: %d %d\n", white_king.col, white_king.row);
+//    printf("black king at: %d %d\n", black_king.col, black_king.row);
     
     switch(piece_from) {
         case EMPTY:
@@ -328,11 +352,12 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
             break;
     }
     
+    
     if (validity == INVALID) return INVALID;
     
     // check check
-    enum mstatus is_check_white = check_for_check_white(cb, from, &array[4]);
-    enum mstatus is_check_black = check_for_check_black(cb, from, &array[4]);
+    enum mstatus is_check_white = check_for_check_white(cb, white_king, &array[4]);
+    enum mstatus is_check_black = check_for_check_black(cb, black_king, &array[4]);
     printf("check status for white is:%u\n", is_check_white);
     printf("check status for black is:%u\n", is_check_black);
     // if I check myself -> INVALID
