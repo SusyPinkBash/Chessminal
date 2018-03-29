@@ -30,6 +30,8 @@ enum mstatus is_valid_pawn(struct chessboard * cb, enum player player, struct mo
 enum mstatus is_valid_king(struct chessboard * cb, enum player player, struct move from, struct move to, const char * array);
 enum mstatus check_for_check_white(struct chessboard * cb, struct move king, struct move from, struct move to);
 enum mstatus check_for_check_black(struct chessboard * cb, struct move king, struct move from, struct move to);
+enum mstatus check_for_checkmate_white(struct chessboard * cb, enum player player, struct move king, struct move from, struct move to);
+enum mstatus check_for_checkmate_black(struct chessboard * cb, enum player player, struct move king, struct move from, struct move to);
 void pawn_promotion (struct chessboard * cb);
 int check_castling (struct chessboard * cb, enum player player, struct move from, struct move to, const char * array);
 void update_king_coordinats (enum player player, struct move to, char * pointer);
@@ -80,8 +82,6 @@ int main(int argc, const char * argv[]) {
     
     //
     enum player current_player = WHITE;
-    
-    
     do {
         if (valid_input) print_chessboard(&cb);
         valid_input = 1;
@@ -147,10 +147,13 @@ int main(int argc, const char * argv[]) {
         //        const char * from = strsep(&input, " ");
         //        const char * to  = strsep(&input, " ");
         
+        // check if not check
+        
+        // move
         enum mstatus status = move_piece(&cb, current_player, &array[0], &array[3]);
         if (status == VALID || status == CHECK) {
             if (status == CHECK)
-                printf("CHECK from main niggaz\n");
+                printf("CHECK");
             struct move move_from = {array[0] - 'a', abs((int) array[1] - '1' - 7)};
             struct move move_to = {array[3] - 'a', abs((int) array[4] - '1' - 7)};;
             enum pieces piece = get_piece(&cb, move_to);
@@ -191,7 +194,12 @@ int main(int argc, const char * argv[]) {
             continue;
         }
         else if (status == CHECK_MATE) {
-            printf("CHECKMATE");
+            printf("CHECKMATE\n");
+            game_on = 1;
+            break;
+        }
+        else if (status == STALE_MATE) {
+            printf("STALEMATE\nGame ended in draw\n");
             game_on = 1;
             break;
         }
@@ -357,19 +365,36 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
     // check check
     enum mstatus is_check_white = check_for_check_white(cb, white_king, from, to);
     enum mstatus is_check_black = check_for_check_black(cb, black_king, from, to);
-    printf("player:%u\n", player);
-    printf("check status for white is:%u\n", is_check_white);
-    printf("check status for black is:%u\n", is_check_black);
+    enum mstatus is_checkmate_white = check_for_checkmate_white(cb, player, white_king, from, to);
+    enum mstatus is_checkmate_black = check_for_checkmate_white(cb, player, black_king, from, to);
+    printf("check checkmate white: %u \n", is_checkmate_white);
+    printf("check checkmate black: %u \n", is_checkmate_black);
     // if I check myself -> INVALID
     // if I check the opponent -> CHECK
     if ((player == WHITE && is_check_white == CHECK) || (player == BLACK && is_check_black == CHECK) ) {
-        printf("You cannot put yourself in a state of CHECK\n");
+//        printf("You cannot put yourself in a state of CHECK\n");
         return INVALID;
     }
-    if ((player == WHITE && is_check_black == CHECK) || (player == BLACK && is_check_white == CHECK)) {
-        printf("CHECK from move fn\n");
-        validity = CHECK;
+//    if ((player == WHITE && is_check_black == CHECK) || (player == BLACK && is_check_white == CHECK)) {
+//        validity = CHECK;
+//    }
+    if (player == WHITE) {
+        if (is_checkmate_white == CHECK_MATE && is_check_white == CHECK)
+            return CHECK_MATE;
+        if (is_checkmate_white == CHECK_MATE && is_check_white != CHECK)
+            return STALE_MATE;
+        if (is_check_white == CHECK)
+            validity = CHECK;
     }
+    else if (player == BLACK) {
+        if (is_checkmate_black == CHECK_MATE && is_check_black == CHECK)
+            return CHECK_MATE;
+        if (is_checkmate_black == CHECK_MATE && is_check_black != CHECK)
+            return STALE_MATE;
+        if (is_check_black == CHECK)
+            validity = CHECK;
+    }
+    // check for checkmate
     
     
     
@@ -915,6 +940,65 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king, str
     //    int one = 1;
     //    int two = 2;
     
+    return VALID;
+}
+
+enum mstatus check_for_checkmate_white(struct chessboard * cb, enum player player, struct move king, struct move from, struct move to) {
+//    struct move fake_king;
+    int king_col = king.col;
+    int king_row = king.row;
+    // check above
+    enum mstatus above_left = VALID;
+    if (king.col > 0 && king.row > 0) {
+        struct move fake_king = {king_col-1, king_row-1};
+        above_left = check_for_check_white(cb, fake_king, from, to);
+    }
+    enum mstatus above_middle = VALID;
+    if (king.row > 0) {
+        struct move fake_king = {king_col, king_row-1};
+        above_middle = check_for_check_white(cb, fake_king, from, to);
+    }
+    enum mstatus above_right = VALID;
+    if (king.col < 7 && king.row > 0) {
+        struct move fake_king = {king_col+1, king_row-1};
+        above_right = check_for_check_white(cb, fake_king, from, to);
+    }
+    // check same row
+    enum mstatus middle_left = VALID;
+    if (king.col > 0) {
+        struct move fake_king = {king_col-1, king_row};
+        middle_left = check_for_check_white(cb, fake_king, from, to);
+    }
+    enum mstatus middle_right = VALID;
+    if (king.col < 7) {
+        struct move fake_king = {king_col+1, king_row};
+        middle_right = check_for_check_white(cb, fake_king, from, to);
+    }
+    // check below
+    enum mstatus below_left = VALID;
+    if (king.col > 0 && king.row < 7) {
+        struct move fake_king = {king_col-1, king_row+1};
+        below_left = check_for_check_white(cb, fake_king, from, to);
+    }
+    enum mstatus below_middle = VALID;
+    if (king.row < 7) {
+        struct move fake_king = {king_col, king_row+1};
+        below_middle = check_for_check_white(cb, fake_king, from, to);
+    }
+    enum mstatus below_right = VALID;
+    if (king.col < 7 && king.row < 7) {
+        struct move fake_king = {king_col+1, king_row+1};
+        below_right = check_for_check_white(cb, fake_king, from, to);
+    }
+    
+    if (above_left == CHECK && above_middle == CHECK &&  above_right == CHECK && middle_left == CHECK && middle_right == CHECK && below_left == CHECK && below_middle == CHECK && below_right == CHECK) {
+        return CHECK_MATE;
+    }
+    
+    return VALID;
+    
+}
+enum mstatus check_for_checkmate_black(struct chessboard * cb, enum player player, struct move king, struct move from, struct move to) {
     return VALID;
 }
 

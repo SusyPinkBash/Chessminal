@@ -7,7 +7,7 @@ enum player {WHITE, BLACK};
 
 /* status return by move()
  */
-enum mstatus {INVALID, VALID, CHECK, CHECK_MATE};
+enum mstatus {INVALID, VALID, CHECK, CHECK_MATE, STALE_MATE};
 
 enum pieces {
     EMPTY=0,
