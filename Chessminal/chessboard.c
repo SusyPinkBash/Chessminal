@@ -356,7 +356,7 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
     enum mstatus is_check_white = check_for_check_white(cb, white_king);
     enum mstatus is_check_black = check_for_check_black(cb, black_king);
     enum mstatus is_stalemate_white = check_for_stalemate_white(cb, player, white_king);
-    enum mstatus is_stalemate_black = check_for_stalemate_white(cb, player, black_king);
+    enum mstatus is_stalemate_black = check_for_stalemate_black(cb, player, black_king);
     // if I check myself -> INVALID
     // if I check the opponent -> CHECK
 //    printf("AFTER CHECKING FOR CHECK\n");
@@ -373,16 +373,16 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
         if (is_stalemate_black == STALE_MATE && is_check_black == CHECK) {
             return CHECK_MATE;
         }
-        if (is_stalemate_black == STALE_MATE && is_check_black != CHECK)
-            return STALE_MATE;
+//        if (is_stalemate_black == STALE_MATE && is_check_black != CHECK)
+//            return STALE_MATE;
         if (is_check_black == CHECK)
             validity = CHECK;
     }
     else if (player == BLACK) {
         if (is_stalemate_white == STALE_MATE && is_check_white == CHECK)
             return CHECK_MATE;
-        if (is_stalemate_white == STALE_MATE && is_check_white != CHECK)
-            return STALE_MATE;
+//        if (is_stalemate_white == STALE_MATE && is_check_white != CHECK)
+//            return STALE_MATE;
         if (is_check_white == CHECK)
             validity = CHECK;
     }
@@ -1162,51 +1162,61 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
 enum mstatus check_for_stalemate_white(struct chessboard * cb, enum player player, struct move king) {
     
     printf("WHITE STALEMATE CHECK START:\n");
-//    struct move fake_king;
     int king_col = king.col;
     int king_row = king.row;
     // check above
-    enum mstatus above_left = VALID;
+    
+//    enum mstatus result = CHECK;
+    
+    enum mstatus above_left = CHECK;
     if (king.col > 0 && king.row > 0) {
         struct move fake_king = {king_col-1, king_row-1};
-        above_left = check_for_check_white(cb, fake_king);
+        if (get_piece(cb, fake_king) > 6)
+            above_left = check_for_check_white(cb, fake_king);
     }
-    enum mstatus above_middle = VALID;
+    enum mstatus above_middle = CHECK;
     if (king.row > 0) {
         struct move fake_king = {king_col, king_row-1};
-        above_middle = check_for_check_white(cb, fake_king);
+        if (get_piece(cb, fake_king) > 6)
+            above_middle = check_for_check_white(cb, fake_king);
     }
-    enum mstatus above_right = VALID;
+    enum mstatus above_right = CHECK;
     if (king.col < 7 && king.row > 0) {
         struct move fake_king = {king_col+1, king_row-1};
-        above_right = check_for_check_white(cb, fake_king);
+        if (get_piece(cb, fake_king) > 6)
+            above_right = check_for_check_white(cb, fake_king);
     }
     // check same row
-    enum mstatus middle_left = VALID;
+    enum mstatus middle_left = CHECK;
     if (king.col > 0) {
         struct move fake_king = {king_col-1, king_row};
-        middle_left = check_for_check_white(cb, fake_king);
+        if (get_piece(cb, fake_king) > 6)
+            middle_left = check_for_check_white(cb, fake_king);
     }
-    enum mstatus middle_right = VALID;
+    enum mstatus middle_right = CHECK;
     if (king.col < 7) {
         struct move fake_king = {king_col+1, king_row};
-        middle_right = check_for_check_white(cb, fake_king);
+        if (get_piece(cb, fake_king) > 6)
+            middle_right = check_for_check_white(cb, fake_king);
     }
     // check below
-    enum mstatus below_left = VALID;
+    enum mstatus below_left = CHECK;
     if (king.col > 0 && king.row < 7) {
         struct move fake_king = {king_col-1, king_row+1};
-        below_left = check_for_check_white(cb, fake_king);
+        if (get_piece(cb, fake_king) > 6)
+            below_left = check_for_check_white(cb, fake_king);
     }
-    enum mstatus below_middle = VALID;
+    enum mstatus below_middle = CHECK;
     if (king.row < 7) {
         struct move fake_king = {king_col, king_row+1};
-        below_middle = check_for_check_white(cb, fake_king);
+        if (get_piece(cb, fake_king) > 6)
+            below_middle = check_for_check_white(cb, fake_king);
     }
-    enum mstatus below_right = VALID;
+    enum mstatus below_right = CHECK;
     if (king.col < 7 && king.row < 7) {
         struct move fake_king = {king_col+1, king_row+1};
-        below_right = check_for_check_white(cb, fake_king);
+        if (get_piece(cb, fake_king) > 6)
+            below_right = check_for_check_white(cb, fake_king);
     }
     
     if (above_left == CHECK && above_middle == CHECK &&  above_right == CHECK && middle_left == CHECK && middle_right == CHECK && below_left == CHECK && below_middle == CHECK && below_right == CHECK) {
@@ -1221,47 +1231,55 @@ enum mstatus check_for_stalemate_black(struct chessboard * cb, enum player playe
     int king_col = king.col;
     int king_row = king.row;
     // check above
-    enum mstatus above_left = VALID;
+    enum mstatus above_left = CHECK;
     if (king.col > 0 && king.row > 0) {
         struct move fake_king = {king_col-1, king_row-1};
-        above_left = check_for_check_black(cb, fake_king);
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+            above_left = check_for_check_black(cb, fake_king);
     }
-    enum mstatus above_middle = VALID;
+    enum mstatus above_middle = CHECK;
     if (king.row > 0) {
         struct move fake_king = {king_col, king_row-1};
-        above_middle = check_for_check_black(cb, fake_king);
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+            above_middle = check_for_check_black(cb, fake_king);
     }
-    enum mstatus above_right = VALID;
+    enum mstatus above_right = CHECK;
     if (king.col < 7 && king.row > 0) {
         struct move fake_king = {king_col+1, king_row-1};
-        above_right = check_for_check_black(cb, fake_king);
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+            above_right = check_for_check_black(cb, fake_king);
     }
     // check same row
-    enum mstatus middle_left = VALID;
+    enum mstatus middle_left = CHECK;
     if (king.col > 0) {
         struct move fake_king = {king_col-1, king_row};
-        middle_left = check_for_check_black(cb, fake_king);
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+            middle_left = check_for_check_black(cb, fake_king);
     }
-    enum mstatus middle_right = VALID;
+    enum mstatus middle_right = CHECK;
     if (king.col < 7) {
         struct move fake_king = {king_col+1, king_row};
-        middle_right = check_for_check_black(cb, fake_king);
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+            middle_right = check_for_check_black(cb, fake_king);
     }
     // check below
-    enum mstatus below_left = VALID;
+    enum mstatus below_left = CHECK;
     if (king.col > 0 && king.row < 7) {
         struct move fake_king = {king_col-1, king_row+1};
-        below_left = check_for_check_black(cb, fake_king);
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+            below_left = check_for_check_black(cb, fake_king);
     }
-    enum mstatus below_middle = VALID;
+    enum mstatus below_middle = CHECK;
     if (king.row < 7) {
         struct move fake_king = {king_col, king_row+1};
-        below_middle = check_for_check_black(cb, fake_king);
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+            below_middle = check_for_check_black(cb, fake_king);
     }
-    enum mstatus below_right = VALID;
+    enum mstatus below_right = CHECK;
     if (king.col < 7 && king.row < 7) {
         struct move fake_king = {king_col+1, king_row+1};
-        below_right = check_for_check_black(cb, fake_king);
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+            below_right = check_for_check_black(cb, fake_king);
     }
     
     if (above_left == CHECK && above_middle == CHECK &&  above_right == CHECK && middle_left == CHECK && middle_right == CHECK && below_left == CHECK && below_middle == CHECK && below_right == CHECK) {
