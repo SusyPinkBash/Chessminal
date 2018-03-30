@@ -1161,82 +1161,123 @@ enum mstatus check_for_check_black(struct chessboard * cb, struct move king) {
 
 enum mstatus check_for_stalemate_white(struct chessboard * cb, enum player player, struct move king) {
     
-    printf("WHITE STALEMATE CHECK START:\n");
+//    printf("WHITE STALEMATE CHECK START:\n");
     int king_col = king.col;
     int king_row = king.row;
     // check above
     
     int something_checked = 0;
+    enum mstatus res = CHECK;
     
     enum mstatus above_left = CHECK;
     if (king.col > 0 && king.row > 0) {
         struct move fake_king = {king_col-1, king_row-1};
-        if (get_piece(cb, fake_king) > 6) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) == 0 || get_piece(cb, fake_king) > 6) {
             above_left = check_for_check_white(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && above_left == CHECK)
+            res = CHECK;
+        else res = above_left;
+       // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     enum mstatus above_middle = CHECK;
     if (king.row > 0) {
         struct move fake_king = {king_col, king_row-1};
-        if (get_piece(cb, fake_king) > 6) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) == 0 || get_piece(cb, fake_king) > 6) {
             above_middle = check_for_check_white(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && above_middle == CHECK)
+            res = CHECK;
+        else res = above_middle;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
             
         }
     }
     enum mstatus above_right = CHECK;
     if (king.col < 7 && king.row > 0) {
         struct move fake_king = {king_col+1, king_row-1};
-        if (get_piece(cb, fake_king) > 6) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) == 0 || get_piece(cb, fake_king) > 6) {
             above_right = check_for_check_white(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && above_right == CHECK)
+            res = CHECK;
+        else res = above_right;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     // check same row
     enum mstatus middle_left = CHECK;
     if (king.col > 0) {
         struct move fake_king = {king_col-1, king_row};
-        if (get_piece(cb, fake_king) > 6) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) == 0 || get_piece(cb, fake_king) > 6) {
             middle_left = check_for_check_white(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && middle_left == CHECK)
+            res = CHECK;
+        else res = middle_left;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     enum mstatus middle_right = CHECK;
     if (king.col < 7) {
         struct move fake_king = {king_col+1, king_row};
-        if (get_piece(cb, fake_king) > 6) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) == 0 || get_piece(cb, fake_king) > 6) {
             middle_right = check_for_check_white(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && middle_right == CHECK)
+            res = CHECK;
+        else res = middle_right;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     // check below
     enum mstatus below_left = CHECK;
     if (king.col > 0 && king.row < 7) {
         struct move fake_king = {king_col-1, king_row+1};
-        if (get_piece(cb, fake_king) > 6) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) == 0 || get_piece(cb, fake_king) > 6) {
             below_left = check_for_check_white(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && below_left == CHECK)
+            res = CHECK;
+        else res = below_left;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     enum mstatus below_middle = CHECK;
     if (king.row < 7) {
         struct move fake_king = {king_col, king_row+1};
-        if (get_piece(cb, fake_king) > 6) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) == 0 || get_piece(cb, fake_king) > 6) {
             below_middle = check_for_check_white(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && below_middle == CHECK)
+            res = CHECK;
+        else res = below_middle;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     enum mstatus below_right = CHECK;
     if (king.col < 7 && king.row < 7) {
         struct move fake_king = {king_col+1, king_row+1};
-        if (get_piece(cb, fake_king) > 6) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) == 0 || get_piece(cb, fake_king) > 6) {
             below_right = check_for_check_white(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && below_right == CHECK)
+            res = CHECK;
+        else res = below_right;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     
-    printf("white something checked == %d\n", something_checked);
+//    printf("white something checked == %d\n", something_checked);
     
     if (something_checked == 0)
         return VALID;
@@ -1249,81 +1290,123 @@ enum mstatus check_for_stalemate_white(struct chessboard * cb, enum player playe
     
 }
 enum mstatus check_for_stalemate_black(struct chessboard * cb, enum player player, struct move king) {
-    printf("BLACK STALEMATE CHECK START:\n");
+//    printf("BLACK STALEMATE CHECK START:\n");
     int king_col = king.col;
     int king_row = king.row;
     
     int something_checked = 0;
     
+    enum mstatus res = CHECK;
+    
     // check above
     enum mstatus above_left = CHECK;
     if (king.col > 0 && king.row > 0) {
         struct move fake_king = {king_col-1, king_row-1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) < 7) {
             above_left = check_for_check_black(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && above_left == CHECK)
+            res = CHECK;
+        else res = above_left;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     enum mstatus above_middle = CHECK;
     if (king.row > 0) {
         struct move fake_king = {king_col, king_row-1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) < 7) {
             above_middle = check_for_check_black(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && above_middle == CHECK)
+            res = CHECK;
+        else res = above_middle;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     enum mstatus above_right = CHECK;
     if (king.col < 7 && king.row > 0) {
         struct move fake_king = {king_col+1, king_row-1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) < 7) {
             above_right = check_for_check_black(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && above_right == CHECK)
+            res = CHECK;
+        else res = above_right;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
-    // check same row
+//     check same row
     enum mstatus middle_left = CHECK;
     if (king.col > 0) {
         struct move fake_king = {king_col-1, king_row};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) < 7) {
             middle_left = check_for_check_black(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && middle_left == CHECK)
+            res = CHECK;
+        else res = middle_left;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     enum mstatus middle_right = CHECK;
     if (king.col < 7) {
         struct move fake_king = {king_col+1, king_row};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) < 7) {
             middle_right = check_for_check_black(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && middle_right == CHECK)
+            res = CHECK;
+        else res = middle_right;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     // check below
     enum mstatus below_left = CHECK;
     if (king.col > 0 && king.row < 7) {
         struct move fake_king = {king_col-1, king_row+1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) < 7) {
             below_left = check_for_check_black(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && below_left == CHECK)
+            res = CHECK;
+        else res = below_left;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     enum mstatus below_middle = CHECK;
     if (king.row < 7) {
         struct move fake_king = {king_col, king_row+1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) < 7) {
             below_middle = check_for_check_black(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && below_middle == CHECK)
+            res = CHECK;
+        else res = below_middle;
+        // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     enum mstatus below_right = CHECK;
     if (king.col < 7 && king.row < 7) {
         struct move fake_king = {king_col+1, king_row+1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
+        // printf("line %d: fake king piece is %u \n", __LINE__, get_piece(cb, fake_king));
+        if (get_piece(cb, fake_king) < 7) {
             below_right = check_for_check_black(cb, fake_king);
             something_checked = 1;
+        if (res == CHECK && below_right == CHECK)
+            res = CHECK;
+        else res = above_right;
+         // printf("line %d: checked piece %u at %d%d\n", __LINE__, get_piece(cb, fake_king), fake_king.col, fake_king.row);
         }
     }
     
-    printf("black something checked == %d\n", something_checked);
+//    printf("black something checked == %d\n", something_checked);
     
     if (something_checked == 0)
         return VALID;
