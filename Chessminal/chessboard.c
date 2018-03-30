@@ -373,16 +373,16 @@ enum mstatus is_valid(struct chessboard * cb, enum player player, struct move fr
         if (is_stalemate_black == STALE_MATE && is_check_black == CHECK) {
             return CHECK_MATE;
         }
-//        if (is_stalemate_black == STALE_MATE && is_check_black != CHECK)
-//            return STALE_MATE;
+        if (is_stalemate_black == STALE_MATE && is_check_black != CHECK)
+            return STALE_MATE;
         if (is_check_black == CHECK)
             validity = CHECK;
     }
     else if (player == BLACK) {
         if (is_stalemate_white == STALE_MATE && is_check_white == CHECK)
             return CHECK_MATE;
-//        if (is_stalemate_white == STALE_MATE && is_check_white != CHECK)
-//            return STALE_MATE;
+        if (is_stalemate_white == STALE_MATE && is_check_white != CHECK)
+            return STALE_MATE;
         if (is_check_white == CHECK)
             validity = CHECK;
     }
@@ -1166,58 +1166,80 @@ enum mstatus check_for_stalemate_white(struct chessboard * cb, enum player playe
     int king_row = king.row;
     // check above
     
-//    enum mstatus result = CHECK;
+    int something_checked = 0;
     
     enum mstatus above_left = CHECK;
     if (king.col > 0 && king.row > 0) {
         struct move fake_king = {king_col-1, king_row-1};
-        if (get_piece(cb, fake_king) > 6)
+        if (get_piece(cb, fake_king) > 6) {
             above_left = check_for_check_white(cb, fake_king);
+            something_checked = 1;
+        }
     }
     enum mstatus above_middle = CHECK;
     if (king.row > 0) {
         struct move fake_king = {king_col, king_row-1};
-        if (get_piece(cb, fake_king) > 6)
+        if (get_piece(cb, fake_king) > 6) {
             above_middle = check_for_check_white(cb, fake_king);
+            something_checked = 1;
+            
+        }
     }
     enum mstatus above_right = CHECK;
     if (king.col < 7 && king.row > 0) {
         struct move fake_king = {king_col+1, king_row-1};
-        if (get_piece(cb, fake_king) > 6)
+        if (get_piece(cb, fake_king) > 6) {
             above_right = check_for_check_white(cb, fake_king);
+            something_checked = 1;
+        }
     }
     // check same row
     enum mstatus middle_left = CHECK;
     if (king.col > 0) {
         struct move fake_king = {king_col-1, king_row};
-        if (get_piece(cb, fake_king) > 6)
+        if (get_piece(cb, fake_king) > 6) {
             middle_left = check_for_check_white(cb, fake_king);
+            something_checked = 1;
+        }
     }
     enum mstatus middle_right = CHECK;
     if (king.col < 7) {
         struct move fake_king = {king_col+1, king_row};
-        if (get_piece(cb, fake_king) > 6)
+        if (get_piece(cb, fake_king) > 6) {
             middle_right = check_for_check_white(cb, fake_king);
+            something_checked = 1;
+        }
     }
     // check below
     enum mstatus below_left = CHECK;
     if (king.col > 0 && king.row < 7) {
         struct move fake_king = {king_col-1, king_row+1};
-        if (get_piece(cb, fake_king) > 6)
+        if (get_piece(cb, fake_king) > 6) {
             below_left = check_for_check_white(cb, fake_king);
+            something_checked = 1;
+        }
     }
     enum mstatus below_middle = CHECK;
     if (king.row < 7) {
         struct move fake_king = {king_col, king_row+1};
-        if (get_piece(cb, fake_king) > 6)
+        if (get_piece(cb, fake_king) > 6) {
             below_middle = check_for_check_white(cb, fake_king);
+            something_checked = 1;
+        }
     }
     enum mstatus below_right = CHECK;
     if (king.col < 7 && king.row < 7) {
         struct move fake_king = {king_col+1, king_row+1};
-        if (get_piece(cb, fake_king) > 6)
+        if (get_piece(cb, fake_king) > 6) {
             below_right = check_for_check_white(cb, fake_king);
+            something_checked = 1;
+        }
     }
+    
+    printf("white something checked == %d\n", something_checked);
+    
+    if (something_checked == 0)
+        return VALID;
     
     if (above_left == CHECK && above_middle == CHECK &&  above_right == CHECK && middle_left == CHECK && middle_right == CHECK && below_left == CHECK && below_middle == CHECK && below_right == CHECK) {
         return STALE_MATE;
@@ -1230,57 +1252,81 @@ enum mstatus check_for_stalemate_black(struct chessboard * cb, enum player playe
     printf("BLACK STALEMATE CHECK START:\n");
     int king_col = king.col;
     int king_row = king.row;
+    
+    int something_checked = 0;
+    
     // check above
     enum mstatus above_left = CHECK;
     if (king.col > 0 && king.row > 0) {
         struct move fake_king = {king_col-1, king_row-1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
             above_left = check_for_check_black(cb, fake_king);
+            something_checked = 1;
+        }
     }
     enum mstatus above_middle = CHECK;
     if (king.row > 0) {
         struct move fake_king = {king_col, king_row-1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
             above_middle = check_for_check_black(cb, fake_king);
+            something_checked = 1;
+        }
     }
     enum mstatus above_right = CHECK;
     if (king.col < 7 && king.row > 0) {
         struct move fake_king = {king_col+1, king_row-1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
             above_right = check_for_check_black(cb, fake_king);
+            something_checked = 1;
+        }
     }
     // check same row
     enum mstatus middle_left = CHECK;
     if (king.col > 0) {
         struct move fake_king = {king_col-1, king_row};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
             middle_left = check_for_check_black(cb, fake_king);
+            something_checked = 1;
+        }
     }
     enum mstatus middle_right = CHECK;
     if (king.col < 7) {
         struct move fake_king = {king_col+1, king_row};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
             middle_right = check_for_check_black(cb, fake_king);
+            something_checked = 1;
+        }
     }
     // check below
     enum mstatus below_left = CHECK;
     if (king.col > 0 && king.row < 7) {
         struct move fake_king = {king_col-1, king_row+1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
             below_left = check_for_check_black(cb, fake_king);
+            something_checked = 1;
+        }
     }
     enum mstatus below_middle = CHECK;
     if (king.row < 7) {
         struct move fake_king = {king_col, king_row+1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
             below_middle = check_for_check_black(cb, fake_king);
+            something_checked = 1;
+        }
     }
     enum mstatus below_right = CHECK;
     if (king.col < 7 && king.row < 7) {
         struct move fake_king = {king_col+1, king_row+1};
-        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7)
+        if (get_piece(cb, fake_king) > 0 && get_piece(cb, fake_king) < 7) {
             below_right = check_for_check_black(cb, fake_king);
+            something_checked = 1;
+        }
     }
+    
+    printf("black something checked == %d\n", something_checked);
+    
+    if (something_checked == 0)
+        return VALID;
     
     if (above_left == CHECK && above_middle == CHECK &&  above_right == CHECK && middle_left == CHECK && middle_right == CHECK && below_left == CHECK && below_middle == CHECK && below_right == CHECK) {
         return STALE_MATE;
